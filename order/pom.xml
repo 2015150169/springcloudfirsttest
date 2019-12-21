@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.cwh.ctrip</groupId>
-    <artifactId>product</artifactId>
+    <artifactId>order</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>product</name>
+    <name>order</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
