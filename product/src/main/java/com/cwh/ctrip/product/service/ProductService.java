@@ -1,5 +1,6 @@
 package com.cwh.ctrip.product.service;
 
+import com.cwh.ctrip.product.DTO.CartDTO;
 import com.cwh.ctrip.product.dataobject.ProductInfo;
 
 
@@ -15,17 +16,17 @@ public interface ProductService {
      * 查询所有在架商品列表
      */
     List<ProductInfo> findUpAll();
-    /*
+
     /**
      * 查询商品列表
      * @param productIdList
      * @return
-
-    List<ProductInfoOutput> findList(List<String> productIdList);
+    */
+    List<ProductInfo> findList(List<String> productIdList);
 
     /**
      * 扣库存
      * @param decreaseStockInputList
-
-    void decreaseStock(List<DecreaseStockInput> decreaseStockInputList);*/
+     */
+    void decreaseStock(List<CartDTO> decreaseStockInputList);
 }

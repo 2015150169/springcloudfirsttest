@@ -1,7 +1,10 @@
 package com.cwh.ctrip.order.controller;
 
 import com.cwh.ctrip.order.VO.ResultVO;
+import com.cwh.ctrip.order.client.ProductClient;
 import com.cwh.ctrip.order.converter.OrderForm2OrderDTOConverter;
+import com.cwh.ctrip.order.dataobject.OrderDetail;
+import com.cwh.ctrip.order.dataobject.ProductInfo;
 import com.cwh.ctrip.order.dto.OrderDTO;
 import com.cwh.ctrip.order.enums.ResultEnum;
 import com.cwh.ctrip.order.exception.OrderException;
@@ -18,8 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -29,6 +35,7 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
 
     /**
      * 1. 参数检验
@@ -40,18 +47,24 @@ public class OrderController {
     @PostMapping("/create")
     public ResultVO<Map<String, String>> create(@Valid OrderForm orderForm,
                                                 BindingResult bindingResult) {
+
+
         if (bindingResult.hasErrors()){
             log.error("【创建订单】参数不正确, orderForm={}", orderForm);
             throw new OrderException(ResultEnum.PARAM_ERROR.getCode(),
                     bindingResult.getFieldError().getDefaultMessage());
         }
-        /* orderForm -> orderDTO
+
+        //orderForm -> orderDTO
         OrderDTO orderDTO = OrderForm2OrderDTOConverter.convert(orderForm);
         if (CollectionUtils.isEmpty(orderDTO.getOrderDetailList())) {
             log.error("【创建订单】购物车信息为空");
             throw new OrderException(ResultEnum.CART_EMPTY);
-        }*/
-        OrderDTO result = orderService.create(new OrderDTO());
+        }
+
+
+
+        OrderDTO result = orderService.create(orderDTO);
 
         Map<String, String> map = new HashMap<>();
         map.put("orderId", result.getOrderId());

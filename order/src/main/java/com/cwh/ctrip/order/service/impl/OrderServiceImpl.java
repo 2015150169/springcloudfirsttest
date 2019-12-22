@@ -1,7 +1,10 @@
 package com.cwh.ctrip.order.service.impl;
 
+import com.cwh.ctrip.order.client.ProductClient;
 import com.cwh.ctrip.order.dataobject.OrderDetail;
 import com.cwh.ctrip.order.dataobject.OrderMaster;
+import com.cwh.ctrip.order.dataobject.ProductInfo;
+import com.cwh.ctrip.order.dto.CartDTO;
 import com.cwh.ctrip.order.dto.OrderDTO;
 import com.cwh.ctrip.order.enums.OrderStatusEnum;
 import com.cwh.ctrip.order.enums.PayStatusEnum;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,9 +32,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMasterRepository orderMasterRepository;
-    /*
+
     @Autowired
-    private ProductClient productClient;*/
+    private ProductClient productClient;
 
     @Override
     public OrderDTO create(OrderDTO orderDTO) {
@@ -66,11 +70,32 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
         productClient.decreaseStock(decreaseStockInputList);
         */
+        //查询商品信息
+        List<String> productIdList = orderDTO.getOrderDetailList().stream().map(OrderDetail::getProductId).collect(Collectors.toList());
+        List<ProductInfo> productInfoList = productClient.listForOrder(productIdList);
+        //计算总价
+        BigDecimal orderAmout = new BigDecimal(0);
+        for(OrderDetail orderDetail : orderDTO.getOrderDetailList()) {
+            for(ProductInfo productInfo : productInfoList) {
+                if(productInfo.getProductId().equals(orderDetail.getProductId())) {
+                    orderAmout = productInfo.getProductPrice().multiply(new BigDecimal(orderDetail.getProductQuantity())).add(orderAmout);
+                    BeanUtils.copyProperties(productInfo, orderDetail);
+                    orderDetail.setOrderId(orderId);
+                    orderDetail.setDetailId(KeyUtil.genUniqueKey());
+                    //订单详情入库
+                    orderDetailRepository.save(orderDetail);
+                }
+            }
+        }
+        //扣库存
+        List<CartDTO> cartDTOList = orderDTO.getOrderDetailList().stream().map(e -> new CartDTO(e.getProductId(),e.getProductQuantity()))
+                .collect(Collectors.toList());
+        productClient.decreaseStock(cartDTOList);
         //订单入库
         OrderMaster orderMaster = new OrderMaster();
         orderDTO.setOrderId(orderId);
         BeanUtils.copyProperties(orderDTO, orderMaster);
-        //orderMaster.setOrderAmount(orderAmout);
+        orderMaster.setOrderAmount(orderAmout);
         orderMaster.setOrderStatus(OrderStatusEnum.NEW.getCode());
         orderMaster.setPayStatus(PayStatusEnum.WAIT.getCode());
         orderMasterRepository.save(orderMaster);

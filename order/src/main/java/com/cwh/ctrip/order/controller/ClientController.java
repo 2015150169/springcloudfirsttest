@@ -1,6 +1,8 @@
 package com.cwh.ctrip.order.controller;
 
 import com.cwh.ctrip.order.client.ProductClient;
+import com.cwh.ctrip.order.dataobject.ProductInfo;
+import com.cwh.ctrip.order.dto.CartDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -8,6 +10,9 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -37,6 +42,21 @@ public class ClientController {
     @GetMapping("/getProductFeignMsg")
     public String getProductFeignMsg() {
         String response = productClient.productMsg();
+        return response;
+    }
+
+    @GetMapping("/getListForOrder")
+    public String getListForOrder() {
+        List<ProductInfo> productInfoList =  productClient.listForOrder(Arrays.asList("157875227953464068"));
+        log.info("repsonse={}",productInfoList);
+        String response = "ok";
+        return response;
+    }
+
+    @GetMapping("/decreaseProductStock")
+    public String decreaseProductStock() {
+        productClient.decreaseStock(Arrays.asList(new CartDTO("157875227953464068",3)));
+        String response = "ok";
         return response;
     }
 
