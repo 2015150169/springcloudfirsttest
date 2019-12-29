@@ -3,8 +3,8 @@ package com.cwh.ctrip.order.enums;
 import lombok.Getter;
 
 /**
- * Created by 廖师兄
- * 2017-12-10 16:18
+ * Created by cwh
+ * 2019-12-10 16:18
  */
 @Getter
 public enum OrderStatusEnum {

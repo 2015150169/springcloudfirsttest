@@ -3,8 +3,8 @@ package com.cwh.ctrip.order.dto;
 import lombok.Data;
 
 /**
- * Created by 廖师兄
- * 2017-12-10 22:36
+ * Created by cwh
+ * 2019-12-10 22:36
  */
 @Data
 public class CartDTO {

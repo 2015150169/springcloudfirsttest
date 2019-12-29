@@ -3,8 +3,8 @@ package com.cwh.ctrip.order.exception;
 import com.cwh.ctrip.order.enums.ResultEnum;
 
 /**
- * Created by 廖师兄
- * 2017-12-10 17:27
+ * Created by cwh
+ * 2019-12-10 17:27
  */
 public class OrderException extends RuntimeException {
 
