@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/env")
 @RefreshScope
 public class EnvController {
-/*
+
     @Value("${env}")
     private String env;
 
@@ -22,5 +22,5 @@ public class EnvController {
     public String print() {
         return env;
     }
-    */
+
 }
